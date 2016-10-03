@@ -202,66 +202,66 @@ int main() {
 		printf("\nPlease enter VM between 1 and 10 !!!");
 	}
 
-send:	
-    sockfd = socket(AF_UNIX, SOCK_DGRAM, 0);
-	if(sockfd < 0) {
+	send:	
+	    sockfd = socket(AF_UNIX, SOCK_DGRAM, 0);
+		if(sockfd < 0) {
 		printf("\nError in creating domain socket !!!\nExiting client ...\n");
 		return 0;
-	}
+		}
 
-	strcpy(fname, CLIENT_PATH);
-	status = mkstemp(fname);
-	unlink(fname);
+		strcpy(fname, CLIENT_PATH);
+		status = mkstemp(fname);
+		unlink(fname);
 	
-    bzero(&servaddr, sizeof(servaddr));
-    servaddr.sun_family = AF_UNIX;
-    strcpy(servaddr.sun_path, fname);
+  		bzero(&servaddr, sizeof(servaddr));
+  		servaddr.sun_family = AF_UNIX;
+    		strcpy(servaddr.sun_path, fname);
 
-    status = bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
-	if (status < 0) {
-		printf("\nError in UNIX domain bind !!!\nExiting ...\n");
-		return 0;
-	}
-	
-    bzero(&servaddr, sizeof(servaddr));
-    servaddr.sun_family = AF_LOCAL;
-    strcpy(servaddr.sun_path, ODR_PATH);
-    
-    status = msg_send(sockfd, servaddr, vm_no, route_rediscover_flag);
-	if (status < 0) {
-		printf("\nUnable to send data to client !!!\nExiting ...\n");
-		return 0;
-	}
-	
-	fd_set 		read_fd;
-	timeout.tv_sec = 3;
-	timeout.tv_usec = 0;
-		
-	FD_ZERO(&read_fd);
-	FD_SET(sockfd, &read_fd);
-	
-	status = select(sockfd + 1, &read_fd, NULL, NULL, &timeout);
-	if (status < 0) {
-		printf("\nStatus = %d, Unable to monitor sockets !!! Exiting ...",status);
-		return 0;
-	}
-		
-	if (FD_ISSET(sockfd, &read_fd)) {
-	
-		status = msg_recv(sockfd);
+   		status = bind(sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
 		if (status < 0) {
-			printf("\nUnable to recive data from client !!!\nExiting ...\n");
+			printf("\nError in UNIX domain bind !!!\nExiting ...\n");
 			return 0;
 		}
 	
-		unlink(fname);
-		return 0;
+  		bzero(&servaddr, sizeof(servaddr));
+   		servaddr.sun_family = AF_LOCAL;
+   		strcpy(servaddr.sun_path, ODR_PATH);
+    
+  		status = msg_send(sockfd, servaddr, vm_no, route_rediscover_flag);
+		if (status < 0) {
+			printf("\nUnable to send data to client !!!\nExiting ...\n");
+			return 0;
+		}
 	
-	} else {
-		route_rediscover_flag = 1;
-		goto send;
+		fd_set 		read_fd;
+		timeout.tv_sec = 3;
+		timeout.tv_usec = 0;
+		
+		FD_ZERO(&read_fd);
+		FD_SET(sockfd, &read_fd);
 	
-	}
+		status = select(sockfd + 1, &read_fd, NULL, NULL, &timeout);
+		if (status < 0) {
+			printf("\nStatus = %d, Unable to monitor sockets !!! Exiting ...",status);
+			return 0;
+		}
+		
+		if (FD_ISSET(sockfd, &read_fd)) {
+	
+			status = msg_recv(sockfd);
+			if (status < 0) {
+				printf("\nUnable to recive data from client !!!\nExiting ...\n");
+				return 0;
+			}
+	
+			unlink(fname);
+			return 0;
+	
+		} else {
+			route_rediscover_flag = 1;
+			goto send;
+	
+		}
 	
 	return 0;
 }

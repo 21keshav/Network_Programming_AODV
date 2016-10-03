@@ -15,7 +15,7 @@
 /* Count digits in the number */
 int
 count_digits(int	number) {
-	int		count = 0;
+	int count = 0;
 	while(number != 0) {
 		number = number/10;
 		count++;
@@ -25,7 +25,7 @@ count_digits(int	number) {
 
 int
 count_digits_long(long	number) {
-	int		count = 0;
+	int count = 0;
 	while(number != 0) {
 		number = number/10;
 		count++;
@@ -35,8 +35,8 @@ count_digits_long(long	number) {
 
 int
 fill_packet_data(char	*packet,
-				 int	data,
-				 int	data_size) {
+		 int	data,
+		 int	data_size) {
 	int		no_digit = count_digits(data);
 	int		iter;
 	
@@ -54,10 +54,10 @@ fill_packet_data(char	*packet,
 
 int
 fill_packet_data_long(char	*packet,
-					  long	data,
-					  int	data_size) {
-	int		no_digit = count_digits_long(data);
-	int		iter;
+		      long	data,
+		      int	data_size) {
+	int	no_digit = count_digits_long(data);
+	int	iter;
 	
 	iter = data_size - 1;
 	for(; iter >= 0; iter --) {
@@ -74,11 +74,11 @@ fill_packet_data_long(char	*packet,
 /*Function Reterives Details from Packet Header Recieved*/
 int
 get_packet_data(char	*packet,
-				int		data_size,
-				int		*ret) {
-	char	number[30];
-	int		iter;
+		int	data_size,
+		int	*ret) {
 	
+	char	number[30];
+	int	iter;
 	for (iter = 0; iter < data_size; iter++) {
 		number[iter] = packet[iter];
 	}
@@ -87,14 +87,14 @@ get_packet_data(char	*packet,
 	return 0;
 }
 
-int msg_send(int 				sockfd,
-			struct sockaddr_un	servaddr,
-			int					vm_no,
-			int                 route_rediscover_flag){
+int msg_send(int sockfd,
+	     struct sockaddr_un	servaddr,
+	     int vm_no,
+	     int route_rediscover_flag){
 	
-	int                 status; 
-	char				hostname[5],selfhostname[10];
-	char				msg[100];
+	int      		status; 
+	char	 		stname[5],selfhostname[10];
+	char			msg[100];
 	struct hostent 		*host_IP = NULL;
 	struct in_addr 		**addr_list = NULL;
 	
@@ -159,7 +159,7 @@ msg_recv(int  sockfd){
 	int                	status;
 	struct sockaddr_un 	recv;
 	socklen_t   		len;
-	char                rmsg[100], recived_timestamp[40],selfhostname[10];
+	char              	rmsg[100], recived_timestamp[40],selfhostname[10];
 	
 	status=gethostname(selfhostname, 10);
 	if (status < 0) {
@@ -183,10 +183,10 @@ msg_recv(int  sockfd){
 
 int main() {
 	int     			sockfd, status, vm_no;
-    struct sockaddr_un 	servaddr;
+   	struct sockaddr_un 		servaddr;
 	char				fname[30],selfhostname[10];
-	int					route_rediscover_flag = 0;
-	struct timeval 		timeout;
+	int				route_rediscover_flag = 0;
+	struct timeval 			timeout;
 	
     status = gethostname(selfhostname, 10);
 	if (status < 0) {
